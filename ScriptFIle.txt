@@ -1,0 +1,59 @@
+#
+from pandas import DataFrame,Series
+import pandas as pd
+from pandasql import sqldf
+sqladb=pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data",sep=",",header=None)
+
+sqladb.columns=['age','workclass','fnlwgt','education','educationNum','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss',
+'hours-per-week','native-country','income']
+
+
+sqladb.head()
+
+##11111111############
+sqldf("select * from sqladb Limit 10;")
+
+
+
+###2222#########
+q="""select avg("hours-per-week") from sqladb where sex=(" Male") and workclass=(" Private");"""
+sqldf(q)
+
+
+
+###Show me the frequency table for education, occupation and relationship, separately
+
+qed="""select education,count(*) from sqladb GROUP BY("education");"""
+sqldf(qed)
+
+qed="""select occupation,count(*) from sqladb GROUP BY("occupation");"""
+sqldf(qed)
+
+qed="""select occupation,count(*) from sqladb GROUP BY("occupation");"""
+sqldf(qed)
+
+qrela="""select relationship,count(*) from sqladb GROUP BY("relationship");"""
+sqldf(qrela)
+
+
+
+##Are there any people who are married, working in private sector and having a masters degr
+
+q="""select * from sqladb where education=" Masters" and workclass=(" Private") and ("marital-status") Not like "%Never-married%";"""
+sqldf(q)
+
+
+##What is the average, minimum and maximum age group for people working in different sectors
+q="""select workclass,avg(age),min(age),max(age) from sqladb GROUP BY("workclass")"""
+sqldf(q)
+
+
+######Calculate age distribution by country
+q=""" SELECT ("native-country"),age, COUNT(age) AS Frequency FROM sqladb GROUP BY "age","native-country" ORDER BY COUNT(age) DESC"""
+sqldf(q)
+
+
+
+##Compute a new column as 'Net-Capital-Gain' from the two columns 'capital-gain' and 'capital-loss'
+q="""select ("capital-gain"-"capital-loss") AS "Net-Capital-Gain" from sqladb;"""
+sqldf(q)
